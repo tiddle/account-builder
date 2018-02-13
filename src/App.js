@@ -2,10 +2,15 @@ import React, { Component } from 'react';
 import logo from './logo.svg';
 import './App.css';
 
-import { getPairPrices } from './market-utils/market';
+import { getPairPrices } from './market/market';
+import { calculateStats } from './accountbuilder';
 
 class App extends Component {
 	componentWillMount() {
+		getPairPrices(2915).then(prices => {
+			console.log(prices);
+			console.log(calculateStats(prices));
+		})
 	}
 
 	render() {
