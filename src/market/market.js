@@ -9,7 +9,7 @@ import { organiseToCandles } from '../time/time';
  * @returns Promise
  */
 export function getMarkets() {
-	const url = 'https://www.cryptopia.co.nz/api/GetMarkets';
+	const url = 'https://www.cryptopia.co.nz/api/GetMarkets/BTC';
 
 	return axios
 		.get(url)
@@ -49,7 +49,7 @@ function morphCPIAData(markets) {
 	return markets
 		.map(market => {
 			return {
-				volume: market.Volume,
+				volume: market.BaseVolume,
 				label: market.Label,
 				id: market.TradePairId
 			};

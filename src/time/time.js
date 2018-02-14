@@ -60,6 +60,8 @@ export function organiseToCandles(collection) {
 function cpiaPriceClean(priceObj) {
 	return {
 		amount: priceObj.Amount,
+		id: priceObj.TradePairId,
+		label: priceObj.Label,
 		price: priceObj.Price,
 		timestamp: priceObj.Timestamp
 	};
