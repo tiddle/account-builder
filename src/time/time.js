@@ -1,6 +1,13 @@
+/**
+ * Organise data into candles
+ *
+ * @export
+ * @param {array} collection
+ * @returns
+ */
 export function organiseToCandles(collection) {
 	// this outputs a weird object and not an array
-	const candles = collection.reduce((acc, curr, index) => {
+	const candles = collection.reduceRight((acc, curr, index) => {
 		const hourTimestamp = getTimestampHour(curr.Timestamp);
 
 		if (!acc[hourTimestamp]) {
@@ -29,25 +36,41 @@ export function organiseToCandles(collection) {
 		return acc;
 	}, []);
 
-    // This fixes the weird output and turns it into a proper array
+	// This fixes the weird output and turns it into a proper array
 	const keys = Object.keys(candles);
 
 	return keys.map(key => {
 		const output = candles[key];
 		output.timestamp = key;
-
-		return output;
+		return {
+			low: cpiaPriceClean(candles[key].low),
+			high: cpiaPriceClean(candles[key].high),
+			open: cpiaPriceClean(candles[key].open),
+			close: cpiaPriceClean(candles[key].close)
+		};
 	});
 }
 
-// function cpiaPriceClean(priceObj) {
-// 	return {
-// 		amount: priceObj.Amount,
-// 		price: priceObj.Price,
-// 		timestamp: priceObj.Timestamp
-// 	};
-// }
+/**
+ * Standardises output
+ *
+ * @param {object} priceObj
+ * @returns
+ */
+function cpiaPriceClean(priceObj) {
+	return {
+		amount: priceObj.Amount,
+		price: priceObj.Price,
+		timestamp: priceObj.Timestamp
+	};
+}
 
+/**
+ * Round down to nearest hour
+ *
+ * @param {any} timestamp
+ * @returns
+ */
 function getTimestampHour(timestamp) {
 	const currTime = new Date(timestamp * 1000);
 
