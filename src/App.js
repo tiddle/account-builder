@@ -13,89 +13,76 @@ class App extends Component {
 		this.state = {};
 
 		getAccountBuilders().then(results => {
+			console.log(results);
 			this.setState({
 				stats: results
 			});
 		});
 	}
 
-	viewtiful(collection) {
-		return collection.reduce((acc, curr) => {
-			const element = (
-				<li>
-					<h2>{curr.label}</h2>
-					<p>Average bounce: {curr.averageBounce}</p>
-					<p>Average price: {curr.averagePrice}</p>
-					{curr.spikes.length !== 0 && (
-						<div>
-							<p>Recent Spikes:</p>
-							<ul>
-								{curr.spikes.map(spike => {
-									return (
-										<li>
-											<p>
-												Price: {spike.details.low.price}
-											</p>
-											<p>
-												Timestamp:{' '}
-												{spike.details.low.timestamp}
-											</p>
-										</li>
-									);
-								})}
-							</ul>
-						</div>
-					)}
-					{curr.drops.length !== 0 && (
-						<div>
-							<p>Recent Drops:</p>
-							<ul>
-								{curr.drops.map(drop => {
-									return (
-										<li>
-											<p>
-												Price: {drop.details.low.price}
-											</p>
-											<p>
-												Timestamp:{' '}
-												{drop.details.low.timestamp}
-											</p>
-										</li>
-									);
-								})}
-							</ul>
-						</div>
-					)}
-				</li>
-			);
+	columns = [
+		{
+			Header: 'Pair',
+			accessor: 'label'
+		},
+		{
+			Header: 'Average Bounce',
+			accessor: 'averageBounce',
+			sortMethod: (a, b) => {
+				return parseInt(a)-parseInt(b);
+			},
+			filterMethod: this.greaterThanFilter
+		},
+		{
+			Header: 'Volume',
+			accessor: 'volume',
+			filterMethod: this.greaterThanFilter
+		},
+		{
+			Header: 'Spikes',
+			id: 'spikes',
+			accessor: price => price.spikes.length,
+			filterMethod: this.greaterThanFilter
+		},
+		{
+			Header: 'Drops',
+			id: 'drops',
+			accessor: price => price.drops.length,
+			filterMethod: this.greaterThanFilter
+		}
+	];
 
-			acc.push(element);
+	greaterThanFilter(filter, row) {
+		if (!filter.value) {
+			return true;
+		}
 
-			return acc;
-		}, []);
+		if (parseInt(row[filter.id]) > filter.value) {
+			return true;
+		}
 	}
-
-	columns = [{
-		Header: 'Pair',
-		accessor: 'label'
-	}, {
-		Header: 'Average Bounce',
-		accessor: 'averageBounce'
-	}, {
-		Header: 'Average Price',
-		accessor: 'averagePrice'
-	}];
 
 	render() {
 		return (
 			<div className="App">
 				<header className="App-header">
-					<img src={logo} className="App-logo" alt="logo" />
-					<h1 className="App-title">Welcome to React</h1>
+					<h1>Cryptopia Account Builder Finder</h1>
 				</header>
 				{this.state.stats && (
-					<ReactTable data={this.state.stats} columns={this.columns}/>
+					<ReactTable
+						filterable
+						data={this.state.stats}
+						columns={this.columns}
+					/>
 				)}
+
+				{!this.state.stats && <p>Loading...</p>}
+
+				<h2>Notes:</h2>
+				<ul>
+					<li>Spikes are 10% greater than opening price</li>
+					<li>Drops are 10% less than opening price</li>
+				</ul>
 			</div>
 		);
 	}

@@ -11,6 +11,7 @@ import { getPairPrices, getMarkets } from './market/market';
  */
 export function calculateStats(
 	collection,
+	volume,
 	spikeThreshold = 0.1,
 	dropThreshold = 0.1
 ) {
@@ -18,6 +19,7 @@ export function calculateStats(
 		(acc, curr, index) => {
 			acc.label = curr.open.label;
 			acc.id = curr.open.id;
+			acc.volume = volume;
 
 			// Calculate average bounce from low to high
 			const priceBounce = calculateChange(
@@ -51,7 +53,7 @@ export function calculateStats(
 					Math.round(acc.changeTotal / (index + 1) * 1000) / 10 + '%';
 				delete acc.changeTotal;
 
-				acc.averagePrice = acc.priceTotal / (index + 1);
+				acc.averagePrice = (acc.priceTotal / (index + 1)).toString();
 				delete acc.priceTotal;
 			}
 
@@ -80,12 +82,17 @@ export async function getAccountBuilders() {
 	const markets = await getMarkets();
 
 	const pairPrices = markets
-		.slice(0, 10) // only the first 10
+		.slice(0, 100) // only the first 10
 		.filter(market => market.volume > 1) // only those with volumes
-		.map(market => market.id) // pluck only the ids
-		.map(getPairPrices); // each id will be passed into an invocation of getPairPrices
+		.map(market => {
+			return getPairPrices(market.id, market.volume);
+		});
 
-	const stats = pairPrices.map(pairPrice => pairPrice.then(calculateStats));
+	const stats = pairPrices.map(pairPrice =>
+		pairPrice.then(price => {
+			return calculateStats(price.candleData, price.volume);
+		})
+	);
 
 	return Promise.all(stats);
 }

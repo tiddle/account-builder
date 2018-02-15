@@ -5,7 +5,7 @@
  * @param {array} collection
  * @returns
  */
-export function organiseToCandles(collection) {
+export function organiseToCandles(collection, volume) {
 	// this outputs a weird object and not an array
 	const candles = collection.reduceRight((acc, curr, index) => {
 		const hourTimestamp = getTimestampHour(curr.Timestamp);
@@ -39,7 +39,7 @@ export function organiseToCandles(collection) {
 	// This fixes the weird output and turns it into a proper array
 	const keys = Object.keys(candles);
 
-	return keys.map(key => {
+	const candleData = keys.map(key => {
 		const output = candles[key];
 		output.timestamp = key;
 		return {
@@ -49,6 +49,11 @@ export function organiseToCandles(collection) {
 			close: cpiaPriceClean(candles[key].close)
 		};
 	});
+
+	return {
+		volume: volume,
+		candleData
+	};
 }
 
 /**
@@ -62,6 +67,7 @@ function cpiaPriceClean(priceObj) {
 		amount: priceObj.Amount,
 		id: priceObj.TradePairId,
 		label: priceObj.Label,
+		volume: priceObj.BaseVolume,
 		price: priceObj.Price,
 		timestamp: priceObj.Timestamp
 	};
