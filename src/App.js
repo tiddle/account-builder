@@ -1,11 +1,9 @@
 import React, { Component } from 'react';
 import ReactTable from 'react-table';
 import 'react-table/react-table.css';
-import logo from './logo.svg';
 import './App.css';
 
 import { getAccountBuilders } from './accountbuilder';
-import { bounce } from './filters/filters';
 
 class App extends Component {
 	constructor(props) {
@@ -13,7 +11,6 @@ class App extends Component {
 		this.state = {};
 
 		getAccountBuilders().then(results => {
-			console.log(results);
 			this.setState({
 				stats: results
 			});
@@ -29,7 +26,7 @@ class App extends Component {
 			Header: 'Average Bounce',
 			accessor: 'averageBounce',
 			sortMethod: (a, b) => {
-				return parseInt(a)-parseInt(b);
+				return parseInt(a) - parseInt(b);
 			},
 			filterMethod: this.greaterThanFilter
 		},
@@ -69,11 +66,14 @@ class App extends Component {
 					<h1>Cryptopia Account Builder Finder</h1>
 				</header>
 				{this.state.stats && (
-					<ReactTable
-						filterable
-						data={this.state.stats}
-						columns={this.columns}
-					/>
+					<div>
+						<p>This data starts from approx 41 days ago</p>
+						<ReactTable
+							filterable
+							data={this.state.stats}
+							columns={this.columns}
+						/>
+					</div>
 				)}
 
 				{!this.state.stats && <p>Loading...</p>}
@@ -82,6 +82,10 @@ class App extends Component {
 				<ul>
 					<li>Spikes are 10% greater than opening price</li>
 					<li>Drops are 10% less than opening price</li>
+					<li>
+						Shift clicking column headers allows sorting of multiple
+						columns
+					</li>
 				</ul>
 			</div>
 		);

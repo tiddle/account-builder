@@ -82,7 +82,7 @@ export async function getAccountBuilders() {
 	const markets = await getMarkets();
 
 	const pairPrices = markets
-		.slice(0, 100) // only the first 10
+		// .slice(0, 100) // only the first 10
 		.filter(market => market.volume > 1) // only those with volumes
 		.map(market => {
 			return getPairPrices(market.id, market.volume);
