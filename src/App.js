@@ -52,7 +52,6 @@ class App extends Component {
 			accessor: 'last',
 			filterMethod: this.greaterThanFilter
 		}
-
 	];
 
 	greaterThanFilter(filter, row) {
@@ -86,11 +85,20 @@ class App extends Component {
 
 				<h2>Notes:</h2>
 				<ul>
-					<li>Spikes are 10% greater than opening price</li>
-					<li>Drops are 10% less than opening price</li>
+					<li>
+						Spikes are 10% greater than opening price of 1 hour
+						candles
+					</li>
+					<li>
+						Drops are 10% less than opening price of 1 hour candles
+					</li>
 					<li>
 						Shift clicking column headers allows sorting of multiple
 						columns
+					</li>
+					<li>
+						Number filters work on a greater than way. So, entering
+						3 will only display any result greater than 3
 					</li>
 				</ul>
 			</div>
