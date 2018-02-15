@@ -7,11 +7,5 @@
  * @returns {array}
  */
 export function bounce(collection, minBounce = 10) {
-    return collection.reduce((acc, curr) => {
-        if(curr.averageBounce > (minBounce/100)) {
-            acc.push(curr);
-        }
-
-        return acc;
-    }, []);
+    return collection.filter(price => price.averageBounce > (minBounce/100));
 }
