@@ -29,13 +29,13 @@ export function getMarkets() {
  * @param {any} id id, or coin pair label
  * @returns Promise
  */
-export function getPairPrices(id, volume) {
+export function getPairPrices(id, volume = 0, last = 0) {
 	const url = 'https://www.cryptopia.co.nz/api/GetMarketHistory/';
 	const timeframeHours = 200; // 1 week
 
 	// There seems to be a bug where GetMarketHistory caps out at 1000 results
 	return axios.get(`${url}${id}/${timeframeHours}`).then(prices => {
-		return organiseToCandles(prices.data.Data, volume);
+		return organiseToCandles(prices.data.Data, volume, last);
 	});
 }
 
@@ -52,7 +52,8 @@ function morphCPIAData(markets) {
 			return {
 				volume: market.BaseVolume,
 				label: market.Label,
-				id: market.TradePairId
+				id: market.TradePairId,
+				last: market.LastPrice
 			};
 		})
 		.sort(sortByVolume);

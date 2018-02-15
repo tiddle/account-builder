@@ -46,7 +46,13 @@ class App extends Component {
 			id: 'drops',
 			accessor: price => price.drops.length,
 			filterMethod: this.greaterThanFilter
+		},
+		{
+			Header: 'Last Price',
+			accessor: 'last',
+			filterMethod: this.greaterThanFilter
 		}
+
 	];
 
 	greaterThanFilter(filter, row) {

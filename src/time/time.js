@@ -2,10 +2,12 @@
  * Organise data into candles
  *
  * @export
- * @param {array} collection
- * @returns
+ * @param {any} collection
+ * @param {number} volume
+ * @param {number} last
+ * @returns {array}
  */
-export function organiseToCandles(collection, volume) {
+export function organiseToCandles(collection, volume, last) {
 	// this outputs a weird object and not an array
 	const candles = collection.reduceRight((acc, curr, index) => {
 		const hourTimestamp = getTimestampHour(curr.Timestamp);
@@ -52,6 +54,7 @@ export function organiseToCandles(collection, volume) {
 
 	return {
 		volume: volume,
+		last: last,
 		candleData
 	};
 }
