@@ -1,4 +1,6 @@
 import React, { Component } from 'react';
+import ReactTable from 'react-table';
+import 'react-table/react-table.css';
 import logo from './logo.svg';
 import './App.css';
 
@@ -12,18 +14,18 @@ class App extends Component {
 
 		getAccountBuilders().then(results => {
 			this.setState({
-				stats: bounce(results, 3)
+				stats: results
 			});
 		});
 	}
 
 	viewtiful(collection) {
-		console.log(collection);
 		return collection.reduce((acc, curr) => {
 			const element = (
 				<li>
 					<h2>{curr.label}</h2>
 					<p>Average bounce: {curr.averageBounce}</p>
+					<p>Average price: {curr.averagePrice}</p>
 					{curr.spikes.length !== 0 && (
 						<div>
 							<p>Recent Spikes:</p>
@@ -73,6 +75,17 @@ class App extends Component {
 		}, []);
 	}
 
+	columns = [{
+		Header: 'Pair',
+		accessor: 'label'
+	}, {
+		Header: 'Average Bounce',
+		accessor: 'averageBounce'
+	}, {
+		Header: 'Average Price',
+		accessor: 'averagePrice'
+	}];
+
 	render() {
 		return (
 			<div className="App">
@@ -81,9 +94,7 @@ class App extends Component {
 					<h1 className="App-title">Welcome to React</h1>
 				</header>
 				{this.state.stats && (
-					<ul className="App-intro">
-						{this.viewtiful(this.state.stats)}
-					</ul>
+					<ReactTable data={this.state.stats} columns={this.columns}/>
 				)}
 			</div>
 		);

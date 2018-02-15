@@ -24,10 +24,13 @@ export function calculateStats(
 				curr.low.price,
 				curr.high.price
 			);
+
+			acc.changeTotal += priceBounce;
+
 			const openDrop = calculateChange(curr.low.price, curr.open.price);
 			const openSpike = calculateChange(curr.high.price, curr.open.price);
 
-			acc.changeTotal += priceBounce;
+			acc.priceTotal += (curr.low.price + curr.high.price) / 2;
 
 			if (openSpike > spikeThreshold) {
 				acc.spikes.push({
@@ -44,17 +47,23 @@ export function calculateStats(
 			}
 
 			if (index + 1 === collection.length) {
-				acc.averageBounce = acc.changeTotal / (index + 1);
+				acc.averageBounce =
+					Math.round(acc.changeTotal / (index + 1) * 1000) / 10 + '%';
 				delete acc.changeTotal;
+
+				acc.averagePrice = acc.priceTotal / (index + 1);
+				delete acc.priceTotal;
 			}
 
 			return acc;
 		},
 		{
 			changeTotal: 0,
+			priceTotal: 0,
 			spikes: [],
 			drops: [],
 			averageBounce: 0,
+			averagePrice: 0,
 			label: '',
 			id: ''
 		}
@@ -71,7 +80,7 @@ export async function getAccountBuilders() {
 	const markets = await getMarkets();
 
 	const pairPrices = markets
-		.slice(0, 100) // only the first 10
+		.slice(0, 10) // only the first 10
 		.filter(market => market.volume > 1) // only those with volumes
 		.map(market => market.id) // pluck only the ids
 		.map(getPairPrices); // each id will be passed into an invocation of getPairPrices

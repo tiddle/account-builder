@@ -47,6 +47,7 @@ export function getPairPrices(id) {
  */
 function morphCPIAData(markets) {
 	return markets
+		.filter(market => market.BaseVolume > 0)
 		.map(market => {
 			return {
 				volume: market.BaseVolume,
