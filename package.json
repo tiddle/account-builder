@@ -1,6 +1,6 @@
 {
 	"name": "account-builder",
-	"version": "1.0.2",
+	"version": "1.0.3",
 	"private": true,
 	"homepage": "http://tiddle.github.io/account-builder",
 	"dependencies": {
