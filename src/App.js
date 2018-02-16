@@ -17,14 +17,14 @@ class App extends Component {
 		});
 	}
 
-	columns = [
+	hourColumns = [
 		{
 			Header: 'Pair',
-			accessor: 'label'
+			accessor: 'hour.label'
 		},
 		{
 			Header: 'Average Bounce',
-			accessor: 'averageBounce',
+			accessor: 'hour.averageBounce',
 			sortMethod: (a, b) => {
 				return parseInt(a) - parseInt(b);
 			},
@@ -38,13 +38,58 @@ class App extends Component {
 		{
 			Header: 'Spikes',
 			id: 'spikes',
-			accessor: price => price.spikes.length,
+			accessor: price => price.hour.spikes.length,
 			filterMethod: this.greaterThanFilter
 		},
 		{
 			Header: 'Drops',
 			id: 'drops',
-			accessor: price => price.drops.length,
+			accessor: price => price.hour.drops.length,
+			filterMethod: this.greaterThanFilter
+		},
+		{
+			Header: 'Last Price (sat)',
+			accessor: 'last',
+			id: 'lastSat',
+			filterMethod: this.greaterThanFilterSatoshi,
+			Cell: row => <span>{Math.floor(row.value * 100000000)} sat</span>
+		},
+		{
+			Header: 'Last Price (btc)',
+			accessor: 'last',
+			id: 'lastBtc',
+			filterMethod: this.greaterThanFilter
+		}
+	];
+
+	dayColumns = [
+		{
+			Header: 'Pair',
+			accessor: 'day.label'
+		},
+		{
+			Header: 'Average Bounce',
+			accessor: 'day.averageBounce',
+			sortMethod: (a, b) => {
+				return parseInt(a) - parseInt(b);
+			},
+			filterMethod: this.greaterThanFilter
+		},
+		{
+			Header: 'Volume',
+			accessor: 'volume',
+			filterMethod: this.greaterThanFilter
+		},
+		{
+			Header: 'Spikes',
+			id: 'spikes',
+			accessor: price => price.day.spikes.length,
+			filterMethod: this.greaterThanFilter
+		},
+		{
+			Header: 'Drops',
+			id: 'drops',
+			accessor: price => price.day.drops.length,
 			filterMethod: this.greaterThanFilter
 		},
 		{
@@ -91,10 +136,19 @@ class App extends Component {
 				{this.state.stats && (
 					<div>
 						<p>This data starts from approx 41 days ago</p>
+
+						<h2>Hourly Candles</h2>
 						<ReactTable
 							filterable
 							data={this.state.stats}
-							columns={this.columns}
+							columns={this.hourColumns}
+						/>
+
+						<h2>Daily Candles</h2>
+						<ReactTable
+							filterable
+							data={this.state.stats}
+							columns={this.dayColumns}
 						/>
 					</div>
 				)}
@@ -104,15 +158,12 @@ class App extends Component {
 				<h2>Notes:</h2>
 				<ul>
 					<li>
-						Spikes are 10% greater than opening price of 1 hour
-						candles
+						Spikes are 10% greater than opening price of candles
 					</li>
+					<li>Drops are 10% less than opening price of candles</li>
 					<li>
-						Drops are 10% less than opening price of 1 hour candles
-					</li>
-					<li>
-						Spike and Drop counters are the amount of times a 1 hour
-						candle exceeds the 10% threshold within the data set
+						Spike and Drop counters are the amount of times a candle
+						exceeds the 10% threshold within the data set
 					</li>
 					<li>
 						Shift clicking column headers allows sorting of multiple

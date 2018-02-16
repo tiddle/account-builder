@@ -9,54 +9,77 @@
  */
 export function organiseToCandles(collection, volume, last) {
 	// this outputs a weird object and not an array
-	const candles = collection.reduceRight((acc, curr, index) => {
-		const hourTimestamp = getTimestampHour(curr.Timestamp);
+	const candles = collection.reduceRight(
+		(acc, curr, index) => {
+			// Hourly Candles
+			const hourTimestamp = getTimestampHour(curr.Timestamp);
+			acc.hourly[hourTimestamp] = setTimeData(
+				acc.hourly[hourTimestamp] || {},
+				curr
+			);
 
-		if (!acc[hourTimestamp]) {
-			acc[hourTimestamp] = {};
-		}
+			// Daily Candles
+			const dayTimestamp = getTimestampDay(curr.Timestamp);
+			acc.daily[dayTimestamp] = setTimeData(
+				acc.daily[dayTimestamp] || {},
+				curr
+			);
 
-		if (acc[hourTimestamp] && !acc[hourTimestamp].high) {
-			acc[hourTimestamp].low = curr;
-			acc[hourTimestamp].high = curr;
-		}
+			return acc;
+		},
+		{ hourly: [], daily: [] }
+	);
 
-		if (acc[hourTimestamp] && !acc[hourTimestamp].open) {
-			acc[hourTimestamp].open = curr;
-		}
-
-		if (acc[hourTimestamp].low.Price > curr.Price) {
-			acc[hourTimestamp].low = curr;
-		}
-
-		if (acc[hourTimestamp].high.Price < curr.Price) {
-			acc[hourTimestamp].high = curr;
-		}
-
-		acc[hourTimestamp].close = curr;
-
-		return acc;
-	}, []);
+	console.log(candles);
 
 	// This fixes the weird output and turns it into a proper array
-	const keys = Object.keys(candles);
+	const hourKeys = Object.keys(candles.hourly);
+	const hourCandleData = hourKeys.map(key =>
+		cleanupCandles(key, candles.hourly)
+	);
+	const dailyKeys = Object.keys(candles.daily);
+	const dayCandleData = dailyKeys.map(key =>
+		cleanupCandles(key, candles.daily)
+	);
 
-	const candleData = keys.map(key => {
-		const output = candles[key];
-		output.timestamp = key;
-		return {
-			low: cpiaPriceClean(candles[key].low),
-			high: cpiaPriceClean(candles[key].high),
-			open: cpiaPriceClean(candles[key].open),
-			close: cpiaPriceClean(candles[key].close)
-		};
-	});
-
-	return {
+	let output = {
 		volume: volume,
 		last: last,
-		candleData
+		hour: hourCandleData,
+		day: dayCandleData
 	};
+
+	return output;
+}
+
+function cleanupCandles(timestamp, candles) {
+	return {
+		low: cpiaPriceClean(candles[timestamp].low),
+		high: cpiaPriceClean(candles[timestamp].high),
+		open: cpiaPriceClean(candles[timestamp].open),
+		close: cpiaPriceClean(candles[timestamp].close)
+	};
+}
+
+function setTimeData(timeStampData, priceDataOriginal) {
+	const output = {};
+	const priceData = Object.assign({}, priceDataOriginal);
+
+	output.low = timeStampData.low || priceData;
+	output.high = timeStampData.high || priceData;
+	output.open = timeStampData.open || priceData;
+
+	if (output.low.Price > priceData.Price) {
+		output.low = priceData;
+	}
+
+	if (output.high.Price < priceData.Price) {
+		output.high = priceData;
+	}
+
+	output.close = priceData;
+
+	return output;
 }
 
 /**
@@ -86,5 +109,18 @@ function getTimestampHour(timestamp) {
 	const currTime = new Date(timestamp * 1000);
 
 	currTime.setMinutes(0, 0, 0);
+	return currTime.getTime();
+}
+
+/**
+ * Round down to nearest day
+ *
+ * @param {any} timestamp
+ * @returns
+ */
+function getTimestampDay(timestamp) {
+	const currTime = new Date(timestamp * 1000);
+
+	currTime.setHours(0, 0, 0, 0);
 	return currTime.getTime();
 }

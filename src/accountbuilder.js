@@ -5,16 +5,12 @@ import { getPairPrices, getMarkets } from './market/market';
  *
  * @export
  * @param {any} collection
- * @param {number} volume
- * @param {number} last
  * @param {number} [spikeThreshold=0.1]
  * @param {number} [dropThreshold=0.1]
  * @returns {object} stats for coin pair
  */
 export function calculateStats(
 	collection,
-	volume,
-	last,
 	spikeThreshold = 0.1,
 	dropThreshold = 0.1
 ) {
@@ -22,8 +18,6 @@ export function calculateStats(
 		(acc, curr, index) => {
 			acc.label = curr.open.label;
 			acc.id = curr.open.id;
-			acc.volume = volume;
-			acc.last = last;
 
 			// Calculate average bounce from low to high
 			const priceBounce = calculateChange(
@@ -86,17 +80,22 @@ export async function getAccountBuilders() {
 	const markets = await getMarkets();
 
 	const pairPrices = markets
-		// .slice(0, 100) // only the first 10
+		// .slice(0, 10) // only the first 10
 		.filter(market => market.volume > 1) // only those with volumes
 		.map(market => {
 			return getPairPrices(market.id, market.volume, market.last);
 		});
 
-	const stats = pairPrices.map(pairPrice =>
-		pairPrice.then(price => {
-			return calculateStats(price.candleData, price.volume, price.last);
-		})
-	);
+	const stats = pairPrices.map(pairPrice => {
+		return pairPrice.then(price => {
+			return {
+				volume: price.volume,
+				last: price.last,
+				hour: calculateStats(price.hour),
+				day: calculateStats(price.day)
+			};
+		});
+	});
 
 	return Promise.all(stats);
 }
