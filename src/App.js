@@ -48,8 +48,16 @@ class App extends Component {
 			filterMethod: this.greaterThanFilter
 		},
 		{
-			Header: 'Last Price',
+			Header: 'Last Price (sat)',
 			accessor: 'last',
+			id: 'lastSat',
+			filterMethod: this.greaterThanFilterSatoshi,
+			Cell: row => <span>{Math.floor(row.value * 100000000)} sat</span>
+		},
+		{
+			Header: 'Last Price (btc)',
+			accessor: 'last',
+			id: 'lastBtc',
 			filterMethod: this.greaterThanFilter
 		}
 	];
@@ -60,6 +68,16 @@ class App extends Component {
 		}
 
 		if (parseInt(row[filter.id]) > filter.value) {
+			return true;
+		}
+	}
+
+	greaterThanFilterSatoshi(filter, row) {
+		if (!filter.value) {
+			return true;
+		}
+
+		if (parseInt(row[filter.id] * 100000000) > filter.value) {
 			return true;
 		}
 	}
@@ -93,12 +111,26 @@ class App extends Component {
 						Drops are 10% less than opening price of 1 hour candles
 					</li>
 					<li>
+						Spike and Drop counters are the amount of times a 1 hour
+						candle exceeds the 10% threshold within the data set
+					</li>
+					<li>
 						Shift clicking column headers allows sorting of multiple
 						columns
 					</li>
 					<li>
 						Number filters work on a greater than way. So, entering
 						3 will only display any result greater than 3
+					</li>
+				</ul>
+
+				<h3>Donations can go here: </h3>
+				<ul>
+					<li>BTC: 1N3AV4c39ptt8uYxkuPZqC2CMjofLNnpgc</li>
+					<li>ETH: 0xe88eee1386e8fa09d17ad7cbb736c09c28dbe4f7</li>
+					<li>LTC: LhEGzB7Qbk3z2c53ERodhhVXhZhfNJziRY</li>
+					<li>
+						XRP: rEb8TK3gBgk5auZkwc6sHnwrGVJH8DuaLh Tag: 106071489
 					</li>
 				</ul>
 			</div>
