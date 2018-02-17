@@ -30,8 +30,6 @@ export function organiseToCandles(collection, volume, last) {
 		{ hourly: [], daily: [] }
 	);
 
-	console.log(candles);
-
 	// This fixes the weird output and turns it into a proper array
 	const hourKeys = Object.keys(candles.hourly);
 	const hourCandleData = hourKeys.map(key =>
