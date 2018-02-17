@@ -26,7 +26,7 @@ class App extends Component {
 			Header: 'Average Bounce',
 			accessor: 'hour.averageBounce',
 			sortMethod: (a, b) => {
-				return parseInt(a) - parseInt(b);
+				return parseInt(a, 10) - parseInt(b, 10);
 			},
 			filterMethod: this.greaterThanFilter
 		},
@@ -59,6 +59,32 @@ class App extends Component {
 			accessor: 'last',
 			id: 'lastBtc',
 			filterMethod: this.greaterThanFilter
+		},
+		{
+			Header: 'Low Price (sat)',
+			accessor: 'low',
+			id: 'lowSat',
+			filterMethod: this.greaterThanFilterSatoshi,
+			Cell: row => <span>{Math.floor(row.value * 100000000)} sat</span>
+		},
+		{
+			Header: 'Low Price (btc)',
+			accessor: 'low',
+			id: 'lowBtc',
+			filterMethod: this.greaterThanFilter,
+		},
+		{
+			Header: 'High Price (sat)',
+			accessor: 'high',
+			id: 'highSat',
+			filterMethod: this.greaterThanFilterSatoshi,
+			Cell: row => <span>{Math.floor(row.value * 100000000)} sat</span>
+		},
+		{
+			Header: 'High Price (btc)',
+			accessor: 'high',
+			id: 'highBtc',
+			filterMethod: this.greaterThanFilter,
 		}
 	];
 
@@ -71,7 +97,7 @@ class App extends Component {
 			Header: 'Average Bounce',
 			accessor: 'day.averageBounce',
 			sortMethod: (a, b) => {
-				return parseInt(a) - parseInt(b);
+				return parseInt(a, 10) - parseInt(b, 10);
 			},
 			filterMethod: this.greaterThanFilter
 		},
@@ -104,6 +130,32 @@ class App extends Component {
 			accessor: 'last',
 			id: 'lastBtc',
 			filterMethod: this.greaterThanFilter
+		},
+		{
+			Header: 'Low Price (sat)',
+			accessor: 'low',
+			id: 'lowSat',
+			filterMethod: this.greaterThanFilterSatoshi,
+			Cell: row => <span>{Math.floor(row.value * 100000000)} sat</span>
+		},
+		{
+			Header: 'Low Price (btc)',
+			accessor: 'low',
+			id: 'lowBtc',
+			filterMethod: this.greaterThanFilter,
+		},
+		{
+			Header: 'High Price (sat)',
+			accessor: 'high',
+			id: 'highSat',
+			filterMethod: this.greaterThanFilterSatoshi,
+			Cell: row => <span>{Math.floor(row.value * 100000000)} sat</span>
+		},
+		{
+			Header: 'High Price (btc)',
+			accessor: 'high',
+			id: 'highBtc',
+			filterMethod: this.greaterThanFilter,
 		}
 	];
 
@@ -112,7 +164,7 @@ class App extends Component {
 			return true;
 		}
 
-		if (parseInt(row[filter.id]) > filter.value) {
+		if (parseInt(row[filter.id], 10) > filter.value) {
 			return true;
 		}
 	}
@@ -122,7 +174,7 @@ class App extends Component {
 			return true;
 		}
 
-		if (parseInt(row[filter.id] * 100000000) > filter.value) {
+		if (parseInt(row[filter.id] * 100000000, 10) > filter.value) {
 			return true;
 		}
 	}

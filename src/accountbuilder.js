@@ -88,9 +88,12 @@ export async function getAccountBuilders() {
 
 	const stats = pairPrices.map(pairPrice => {
 		return pairPrice.then(price => {
+			const highLow = getHighLow(price.hour);
 			return {
 				volume: price.volume,
 				last: price.last,
+				low: highLow.low,
+				high: highLow.high,
 				hour: calculateStats(price.hour),
 				day: calculateStats(price.day)
 			};
@@ -98,6 +101,29 @@ export async function getAccountBuilders() {
 	});
 
 	return Promise.all(stats);
+}
+
+/**
+ * Get lowest and highest price of coin pair
+ *
+ * @param {array} prices
+ * @returns {object}
+ */
+function getHighLow(prices) {
+	return prices.reduce(
+		(acc, curr) => {
+			if (acc.low > curr.low.price) {
+				acc.low = curr.low.price;
+			}
+
+			if (acc.high < curr.high.price) {
+				acc.high = curr.high.price;
+			}
+
+			return acc;
+		},
+		{ low: 9999999999, high: 0 }
+	);
 }
 
 function calculateChange(newValue, oldValue) {
