@@ -20,7 +20,17 @@ class App extends Component {
 	hourColumns = [
 		{
 			Header: 'Pair',
-			accessor: 'hour.label'
+			accessor: 'hour.label',
+			Cell: row => {
+				return (
+					<a
+						href={`https://coinigy.com/main/markets/CPIA/${row.value}`}
+						target="_blank"
+					>
+						{row.value}
+					</a>
+				);
+			}
 		},
 		{
 			Header: 'Average Bounce',
@@ -71,7 +81,7 @@ class App extends Component {
 			Header: 'Low Price (btc)',
 			accessor: 'low',
 			id: 'lowBtc',
-			filterMethod: this.greaterThanFilter,
+			filterMethod: this.greaterThanFilter
 		},
 		{
 			Header: 'High Price (sat)',
@@ -84,14 +94,24 @@ class App extends Component {
 			Header: 'High Price (btc)',
 			accessor: 'high',
 			id: 'highBtc',
-			filterMethod: this.greaterThanFilter,
+			filterMethod: this.greaterThanFilter
 		}
 	];
 
 	dayColumns = [
 		{
 			Header: 'Pair',
-			accessor: 'day.label'
+			accessor: 'day.label',
+			Cell: row => {
+				return (
+					<a
+						href={`https://coinigy.com/main/markets/CPIA/${row.value}`}
+						target="_blank"
+					>
+						{row.value}
+					</a>
+				);
+			}
 		},
 		{
 			Header: 'Average Bounce',
@@ -142,7 +162,7 @@ class App extends Component {
 			Header: 'Low Price (btc)',
 			accessor: 'low',
 			id: 'lowBtc',
-			filterMethod: this.greaterThanFilter,
+			filterMethod: this.greaterThanFilter
 		},
 		{
 			Header: 'High Price (sat)',
@@ -155,7 +175,7 @@ class App extends Component {
 			Header: 'High Price (btc)',
 			accessor: 'high',
 			id: 'highBtc',
-			filterMethod: this.greaterThanFilter,
+			filterMethod: this.greaterThanFilter
 		}
 	];
 
