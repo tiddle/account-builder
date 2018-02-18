@@ -43,6 +43,8 @@ export function organiseToCandles(collection, volume, last) {
 	let output = {
 		volume: volume,
 		last: last,
+		label: hourCandleData[0].open.label,
+		id: hourCandleData[0].open.label,
 		hour: hourCandleData,
 		day: dayCandleData
 	};

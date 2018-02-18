@@ -1,6 +1,6 @@
 import axios from 'axios';
 
-import { organiseToCandles } from '../time/time';
+import { organiseToCandles } from './time';
 
 /**
  * Get list of markets from CPIA

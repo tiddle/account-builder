@@ -3,7 +3,7 @@ import ReactTable from 'react-table';
 import 'react-table/react-table.css';
 import './App.css';
 
-import { getAccountBuilders } from './binance/accountbuilder';
+import { getAccountBuilders } from './cryptopia/accountbuilder';
 
 class App extends Component {
 	constructor(props) {

@@ -1,5 +1,5 @@
-import { getPairPrices, getMarkets } from './market/market';
-import { calculateStats, getHighLow } from './utils/price';
+import { getPairPrices, getMarkets } from './market';
+import { calculateStats, getHighLow } from '../utils/price';
 
 
 /**
@@ -27,7 +27,9 @@ export async function getAccountBuilders() {
 				low: highLow.low,
 				high: highLow.high,
 				hour: calculateStats(price.hour, price.label, price.id),
-				day: calculateStats(price.day, price.label, price.id)
+				day: calculateStats(price.day, price.label, price.id),
+				id: price.id,
+				label: price.label
 			};
 		});
 	});
