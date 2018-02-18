@@ -1,21 +1,13 @@
-import { getPairPrices, getMarkets } from './market/market';
-import { calculateStats, getHighLow } from './utils/price';
+import { getMarkets, getPairPrices } from './market';
+import { getHighLow, calculateStats } from '../utils/price';
 
-
-/**
- * Get account builders
- *
- * @export function
- * @returns
- */
 export async function getAccountBuilders() {
 	const markets = await getMarkets();
 
 	const pairPrices = markets
 		// .slice(0, 10) // only the first 10
-		.filter(market => market.volume > 1) // only those with volumes
 		.map(market => {
-			return getPairPrices(market.id, market.volume, market.last);
+			return getPairPrices(market.id, market.label);
 		});
 
 	const stats = pairPrices.map(pairPrice => {
@@ -26,8 +18,10 @@ export async function getAccountBuilders() {
 				last: price.last,
 				low: highLow.low,
 				high: highLow.high,
-				hour: calculateStats(price.hour, price.label, price.id),
-				day: calculateStats(price.day, price.label, price.id)
+				label: price.label,
+				id: price.id,
+				hour: calculateStats(price.hour),
+				day: calculateStats(price.day)
 			};
 		});
 	});

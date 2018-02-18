@@ -3,7 +3,7 @@ import ReactTable from 'react-table';
 import 'react-table/react-table.css';
 import './App.css';
 
-import { getAccountBuilders } from './accountbuilder';
+import { getAccountBuilders } from './binance/accountbuilder';
 
 class App extends Component {
 	constructor(props) {
@@ -17,20 +17,10 @@ class App extends Component {
 		});
 	}
 
-	hourColumns = [
+	columns = [
 		{
 			Header: 'Pair',
-			accessor: 'hour.label',
-			Cell: row => {
-				return (
-					<a
-						href={`https://coinigy.com/main/markets/CPIA/${row.value}`}
-						target="_blank"
-					>
-						{row.value}
-					</a>
-				);
-			}
+			accessor: 'label'
 		},
 		{
 			Header: 'Average Bounce',
@@ -43,7 +33,8 @@ class App extends Component {
 		{
 			Header: 'Volume',
 			accessor: 'volume',
-			filterMethod: this.greaterThanFilter
+			filterMethod: this.greaterThanFilter,
+			sortMethod: this.sortForceNumber
 		},
 		{
 			Header: 'Spikes',
@@ -62,12 +53,14 @@ class App extends Component {
 			accessor: 'last',
 			id: 'lastSat',
 			filterMethod: this.greaterThanFilterSatoshi,
+			sortMethod: this.sortForceNumber,
 			Cell: row => <span>{Math.floor(row.value * 100000000)} sat</span>
 		},
 		{
 			Header: 'Last Price (btc)',
 			accessor: 'last',
 			id: 'lastBtc',
+			sortMethod: this.sortForceNumber,
 			filterMethod: this.greaterThanFilter
 		},
 		{
@@ -75,12 +68,14 @@ class App extends Component {
 			accessor: 'low',
 			id: 'lowSat',
 			filterMethod: this.greaterThanFilterSatoshi,
+			sortMethod: this.sortForceNumber,
 			Cell: row => <span>{Math.floor(row.value * 100000000)} sat</span>
 		},
 		{
 			Header: 'Low Price (btc)',
 			accessor: 'low',
 			id: 'lowBtc',
+			sortMethod: this.sortForceNumber,
 			filterMethod: this.greaterThanFilter
 		},
 		{
@@ -88,93 +83,14 @@ class App extends Component {
 			accessor: 'high',
 			id: 'highSat',
 			filterMethod: this.greaterThanFilterSatoshi,
+			sortMethod: this.sortForceNumber,
 			Cell: row => <span>{Math.floor(row.value * 100000000)} sat</span>
 		},
 		{
 			Header: 'High Price (btc)',
 			accessor: 'high',
 			id: 'highBtc',
-			filterMethod: this.greaterThanFilter
-		}
-	];
-
-	dayColumns = [
-		{
-			Header: 'Pair',
-			accessor: 'day.label',
-			Cell: row => {
-				return (
-					<a
-						href={`https://coinigy.com/main/markets/CPIA/${row.value}`}
-						target="_blank"
-					>
-						{row.value}
-					</a>
-				);
-			}
-		},
-		{
-			Header: 'Average Bounce',
-			accessor: 'day.averageBounce',
-			sortMethod: (a, b) => {
-				return parseInt(a, 10) - parseInt(b, 10);
-			},
-			filterMethod: this.greaterThanFilter
-		},
-		{
-			Header: 'Volume',
-			accessor: 'volume',
-			filterMethod: this.greaterThanFilter
-		},
-		{
-			Header: 'Spikes',
-			id: 'spikes',
-			accessor: price => price.day.spikes.length,
-			filterMethod: this.greaterThanFilter
-		},
-		{
-			Header: 'Drops',
-			id: 'drops',
-			accessor: price => price.day.drops.length,
-			filterMethod: this.greaterThanFilter
-		},
-		{
-			Header: 'Last Price (sat)',
-			accessor: 'last',
-			id: 'lastSat',
-			filterMethod: this.greaterThanFilterSatoshi,
-			Cell: row => <span>{Math.floor(row.value * 100000000)} sat</span>
-		},
-		{
-			Header: 'Last Price (btc)',
-			accessor: 'last',
-			id: 'lastBtc',
-			filterMethod: this.greaterThanFilter
-		},
-		{
-			Header: 'Low Price (sat)',
-			accessor: 'low',
-			id: 'lowSat',
-			filterMethod: this.greaterThanFilterSatoshi,
-			Cell: row => <span>{Math.floor(row.value * 100000000)} sat</span>
-		},
-		{
-			Header: 'Low Price (btc)',
-			accessor: 'low',
-			id: 'lowBtc',
-			filterMethod: this.greaterThanFilter
-		},
-		{
-			Header: 'High Price (sat)',
-			accessor: 'high',
-			id: 'highSat',
-			filterMethod: this.greaterThanFilterSatoshi,
-			Cell: row => <span>{Math.floor(row.value * 100000000)} sat</span>
-		},
-		{
-			Header: 'High Price (btc)',
-			accessor: 'high',
-			id: 'highBtc',
+			sortMethod: this.sortForceNumber,
 			filterMethod: this.greaterThanFilter
 		}
 	];
@@ -199,6 +115,10 @@ class App extends Component {
 		}
 	}
 
+	sortForceNumber(a, b) {
+		return parseFloat(a) - parseFloat(b);
+	}
+
 	render() {
 		return (
 			<div className="App">
@@ -213,14 +133,14 @@ class App extends Component {
 						<ReactTable
 							filterable
 							data={this.state.stats}
-							columns={this.hourColumns}
+							columns={this.columns}
 						/>
 
 						<h2>Daily Candles</h2>
 						<ReactTable
 							filterable
 							data={this.state.stats}
-							columns={this.dayColumns}
+							columns={this.columns}
 						/>
 					</div>
 				)}
