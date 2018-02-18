@@ -4,17 +4,33 @@ import 'react-table/react-table.css';
 import './App.css';
 
 import { getAccountBuilders } from './cryptopia/accountbuilder';
+import { getAccountBuilders as binaGetAccountBuilders } from './binance/accountbuilder';
 
 class App extends Component {
 	constructor(props) {
 		super(props);
 		this.state = {};
+	}
 
-		getAccountBuilders().then(results => {
+	componentWillMount() {
+		if (window.location.search.indexOf('BINA') !== -1) {
+			console.log('BINANCE PLEASE');
 			this.setState({
-				stats: results
+				exchange: 'binance'
 			});
-		});
+
+			binaGetAccountBuilders().then(results => {
+				this.setState({
+					stats: results
+				});
+			});
+		} else {
+			getAccountBuilders().then(results => {
+				this.setState({
+					stats: results
+				});
+			});
+		}
 	}
 
 	columns = [
@@ -123,12 +139,23 @@ class App extends Component {
 		return (
 			<div className="App">
 				<header className="App-header">
-					<h1>Cryptopia Account Builder Finder</h1>
+					<h1>Account Builder Finder</h1>
 				</header>
+				{this.state.exchange === 'binance' && (
+					<div>
+						<h2>
+							YOU WILL NEED A BROWSER PLUGIN THAT ALLOWS OVERRIDE
+							OF CORS FOR BINANCE DATA
+						</h2>
+						<p>
+							I haven't had time to create an api for the data,
+							just search for "allow origin browser plugin". I use "CORS Everywhere" on firefox.
+						</p>
+					</div>
+				)}
+
 				{this.state.stats && (
 					<div>
-						<p>This data starts from approx 41 days ago</p>
-
 						<h2>Hourly Candles</h2>
 						<ReactTable
 							filterable
