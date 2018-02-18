@@ -9,14 +9,16 @@ import { getAccountBuilders as binaGetAccountBuilders } from './binance/accountb
 class App extends Component {
 	constructor(props) {
 		super(props);
-		this.state = {};
+		this.state = {
+			exchange: 'Cryptopia'
+		};
 	}
 
 	componentWillMount() {
 		if (window.location.search.indexOf('BINA') !== -1) {
 			console.log('BINANCE PLEASE');
 			this.setState({
-				exchange: 'binance'
+				exchange: 'Binance'
 			});
 
 			binaGetAccountBuilders().then(results => {
@@ -139,19 +141,27 @@ class App extends Component {
 		return (
 			<div className="App">
 				<header className="App-header">
-					<h1>Account Builder Finder</h1>
+					<h1>{this.state.exchange} Account Builder Finder</h1>
 				</header>
-				{this.state.exchange === 'binance' && (
+				{this.state.exchange === 'Binance' && (
 					<div>
 						<h2>
 							YOU WILL NEED A BROWSER PLUGIN THAT ALLOWS OVERRIDE
 							OF CORS FOR BINANCE DATA
 						</h2>
+						<p>This is in early <strong>BETA</strong></p>
 						<p>
 							I haven't had time to create an api for the data,
-							just search for "allow origin browser plugin". I use "CORS Everywhere" on firefox.
+							just search for "allow origin browser plugin". I use
+							"CORS Everywhere" on firefox.
 						</p>
 					</div>
+				)}
+
+				{this.state.exchange !== 'Binance' && (
+					<p>
+						<a href="?BINA">Binance Account Builders</a>
+					</p>
 				)}
 
 				{this.state.stats && (
