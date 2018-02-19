@@ -28,3 +28,30 @@ export async function getAccountBuilders() {
 
 	return Promise.all(stats);
 }
+
+
+export async function getAccountBuildersStreamable() {
+    const markets = await getMarkets();
+
+    const pairPrices = markets
+    // .slice(0, 10) // only the first 10
+        .map(market => {
+            return getPairPrices(market.id, market.label);
+        });
+
+    return pairPrices.map(pairPrice => {
+        return pairPrice.then(price => {
+            const highLow = getHighLow(price.hour);
+            return {
+                volume: price.volume,
+                last: price.last,
+                low: highLow.low,
+                high: highLow.high,
+                label: price.label,
+                id: price.id,
+                hour: calculateStats(price.hour),
+                day: calculateStats(price.day)
+            };
+        });
+    });
+}
