@@ -1,5 +1,7 @@
 import React, { Component } from 'react';
 import ReactTable from 'react-table';
+import numeral from 'numeral';
+
 import 'react-table/react-table.css';
 import './App.css';
 
@@ -72,7 +74,7 @@ class App extends Component {
 			id: 'lastSat',
 			filterMethod: this.greaterThanFilterSatoshi,
 			sortMethod: this.sortForceNumber,
-			Cell: row => <span>{Math.floor(row.value * 100000000)} sat</span>
+			Cell: this.satoshiFormat
 		},
 		{
 			Header: 'Last Price (btc)',
@@ -87,7 +89,7 @@ class App extends Component {
 			id: 'lowSat',
 			filterMethod: this.greaterThanFilterSatoshi,
 			sortMethod: this.sortForceNumber,
-			Cell: row => <span>{Math.floor(row.value * 100000000)} sat</span>
+			Cell: this.satoshiFormat
 		},
 		{
 			Header: 'Low Price (btc)',
@@ -102,7 +104,7 @@ class App extends Component {
 			id: 'highSat',
 			filterMethod: this.greaterThanFilterSatoshi,
 			sortMethod: this.sortForceNumber,
-			Cell: row => <span>{Math.floor(row.value * 100000000)} sat</span>
+			Cell: this.satoshiFormat
 		},
 		{
 			Header: 'High Price (btc)',
@@ -112,6 +114,14 @@ class App extends Component {
 			filterMethod: this.greaterThanFilter
 		}
 	];
+
+	satoshiFormat(row) {
+		return (
+			<span style={{ display: 'block', textAlign: 'right'}}>
+				{numeral(Math.floor(row.value * 100000000)).format('0,0')} sat
+			</span>
+		);
+	}
 
 	greaterThanFilter(filter, row) {
 		if (!filter.value) {
@@ -149,7 +159,9 @@ class App extends Component {
 							YOU WILL NEED A BROWSER PLUGIN THAT ALLOWS OVERRIDE
 							OF CORS FOR BINANCE DATA
 						</h2>
-						<p>This is in early <strong>BETA</strong></p>
+						<p>
+							This is in early <strong>BETA</strong>
+						</p>
 						<p>
 							I haven't had time to create an api for the data,
 							just search for "allow origin browser plugin". I use
