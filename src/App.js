@@ -118,7 +118,7 @@ class App extends Component {
 			return true;
 		}
 
-		if (parseFloat(row[filter.id], 10) > filter.value) {
+		if (parseFloat(row[filter.id]) > filter.value) {
 			return true;
 		}
 	}
