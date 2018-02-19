@@ -7,7 +7,8 @@ import './App.css';
 
 import { getAccountBuildersStreamable } from './cryptopia/accountbuilder';
 import { getAccountBuildersStreamable as binaGetAccountBuildersStreamable } from './binance/accountbuilder';
-import PromisePool from "./utils/promise-pool.js";
+import PromisePool from './utils/promise-pool.js';
+import { getMarkets } from './hitbtc/market';
 
 class App extends Component {
 	constructor(props) {
@@ -15,50 +16,54 @@ class App extends Component {
 		this.state = {
 			exchange: 'Cryptopia'
 		};
+
+		getMarkets().then(result => {
+			console.log(result);
+		});
 	}
 
 	async componentWillMount() {
-        const promisePool = new PromisePool();
-        let promises;
+		// const promisePool = new PromisePool();
+		// let promises;
 
-        /**
-		 * Each time one of the promises in the PromisePool
-		 * is resolved (or rejected), it will trigger this.
-         */
-        promisePool.subscribe((actionType, data) => {
-            if (actionType === 'settled') {
-                this.setState(state => {
-                    return {
-                        ...state,
-                        stats: state.stats.concat([data])
-                    };
-                })
-            } else if (actionType === 'finalized') {
-            	// they're all finished, let's clean up
-				promisePool.terminate();
-			}
-        });
+		// /**
+		//  * Each time one of the promises in the PromisePool
+		//  * is resolved (or rejected), it will trigger this.
+		//  */
+		// promisePool.subscribe((actionType, data) => {
+		// 	if (actionType === 'settled') {
+		// 		this.setState(state => {
+		// 			return {
+		// 				...state,
+		// 				stats: state.stats.concat([data])
+		// 			};
+		// 		});
+		// 	} else if (actionType === 'finalized') {
+		// 		// they're all finished, let's clean up
+		// 		promisePool.terminate();
+		// 	}
+		// });
 
-		if (window.location.search.indexOf('BINA') !== -1) {
-			console.log('BINANCE PLEASE');
-			this.setState({
-				exchange: 'Binance'
-			});
+		// if (window.location.search.indexOf('BINA') !== -1) {
+		// 	console.log('BINANCE PLEASE');
+		// 	this.setState({
+		// 		exchange: 'Binance'
+		// 	});
 
-			promises = await binaGetAccountBuildersStreamable();
-		} else {
-            promises = await getAccountBuildersStreamable();
-		}
+		// 	promises = await binaGetAccountBuildersStreamable();
+		// } else {
+		// 	promises = await getAccountBuildersStreamable();
+		// }
 
-        /**
-		 * set the initial container for the results
-         */
-        this.setState({ stats: [] });
+		// /**
+		//  * set the initial container for the results
+		//  */
+		// this.setState({ stats: [] });
 
-        /**
-		 * Add each request to the promise pool so we can listen to it
-         */
-        promises.map(req => promisePool.add(req));
+		// /**
+		//  * Add each request to the promise pool so we can listen to it
+		//  */
+		// promises.map(req => promisePool.add(req));
 	}
 
 	columns = [
@@ -141,7 +146,7 @@ class App extends Component {
 
 	satoshiFormat(row) {
 		return (
-			<span style={{ display: 'block', textAlign: 'right'}}>
+			<span style={{ display: 'block', textAlign: 'right' }}>
 				{numeral(Math.floor(row.value * 100000000)).format('0,0')} sat
 			</span>
 		);
