@@ -42,9 +42,9 @@ export function calculateChange(newValue, oldValue) {
  * @returns {object} stats for coin pair
  */
 export function calculateStats(
-    collection,
-    label,
-    id,
+	collection,
+	label,
+	id,
 	spikeThreshold = 0.1,
 	dropThreshold = 0.1
 ) {
@@ -96,7 +96,7 @@ export function calculateStats(
 			averageBounce: 0,
 			averagePrice: 0,
 			label: label,
-			id: id 
+			id: id
 		}
 	);
 }
