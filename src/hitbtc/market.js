@@ -26,7 +26,7 @@ export function getPairPrices(id, label) {
 	console.log(url);
 
 	const hourly = axios
-		.get(`${url}${id}&period=H1`)
+		.get(`${url}${id}?period=H1`)
 		.then(prices => formatCandles(prices.data));
 
 	// const daily = axios
@@ -61,18 +61,18 @@ function formatCandles(candles) {
 	const output = candles.map(curr => {
 		return {
 			low: {
-				price: curr[3]
+				price: curr.min
 			},
 			high: {
-				price: curr[2]
+				price: curr.max
 			},
 			open: {
-				price: curr[1],
-				timestamp: curr[0]
+				price: curr.open,
+				timestamp: new Date(curr.timestamp).getTime()
 			},
 			close: {
-				price: curr[4],
-				timestamp: curr[6]
+				price: curr.close,
+				timestamp: new Date(curr.timestamp).getTime()
 			}
 		};
 	});

@@ -17,11 +17,11 @@ class App extends Component {
 			exchange: 'Cryptopia'
 		};
 
-		// getMarkets().then(result => {
-		// 	console.log(result);
-		// });
+		getMarkets().then(result => {
+			console.log(result);
+		});
 
-		getPairPrices('ETHCBTC', 'ETH/BTC').then(result => {
+		getPairPrices('ETHBTC', 'ETH/BTC').then(result => {
 			console.log(result);
 		});
 	}
