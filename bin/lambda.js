@@ -1,4 +1,4 @@
-var indexModule = require('../lambda-dist/index.js');
+var indexModule = require('../lambda-dist/main.js');
 
 var fakeLambdaContext = {
 	succeed: function succeed(results) {
@@ -7,4 +7,4 @@ var fakeLambdaContext = {
 	}
 };
 
-indexModule.hello({ name: 'bob' }, fakeLambdaContext);
+indexModule.getCandles({ name: 'bob' }, fakeLambdaContext);

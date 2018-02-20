@@ -1,11 +1,11 @@
 var path = require('path');
 
 module.exports = {
-    entry: './src/lambda/index.js',
+    entry: './src/lambda/cryptopia.js',
     output: {
         path: path.resolve(__dirname, 'lambda-dist'),
-        filename: 'index.js',
-        library: 'index',
+        filename: '[name].js',
+        library: '[name]',
         libraryTarget: 'commonjs2'
     },
     target: 'node',

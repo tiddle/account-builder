@@ -1,7 +1,7 @@
 import { getMarkets, getPairPrices } from '../cryptopia/market';
 import { getHighLow } from '../utils/price';
 
-exports.cryptopia = function(aa) {
+exports.getCandles = function(aa) {
 	getMarkets()
 		.then(markets => {
 			const pp = markets
