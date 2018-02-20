@@ -8,7 +8,7 @@ import './App.css';
 import { getAccountBuildersStreamable } from './cryptopia/accountbuilder';
 import { getAccountBuildersStreamable as binaGetAccountBuildersStreamable } from './binance/accountbuilder';
 import PromisePool from './utils/promise-pool.js';
-import { getMarkets } from './hitbtc/market';
+import { getMarkets, getPairPrices } from './hitbtc/market';
 
 class App extends Component {
 	constructor(props) {
@@ -17,7 +17,11 @@ class App extends Component {
 			exchange: 'Cryptopia'
 		};
 
-		getMarkets().then(result => {
+		// getMarkets().then(result => {
+		// 	console.log(result);
+		// });
+
+		getPairPrices('ETHCBTC', 'ETH/BTC').then(result => {
 			console.log(result);
 		});
 	}
@@ -25,7 +29,6 @@ class App extends Component {
 	async componentWillMount() {
 		// const promisePool = new PromisePool();
 		// let promises;
-
 		// /**
 		//  * Each time one of the promises in the PromisePool
 		//  * is resolved (or rejected), it will trigger this.
@@ -43,23 +46,19 @@ class App extends Component {
 		// 		promisePool.terminate();
 		// 	}
 		// });
-
 		// if (window.location.search.indexOf('BINA') !== -1) {
 		// 	console.log('BINANCE PLEASE');
 		// 	this.setState({
 		// 		exchange: 'Binance'
 		// 	});
-
 		// 	promises = await binaGetAccountBuildersStreamable();
 		// } else {
 		// 	promises = await getAccountBuildersStreamable();
 		// }
-
 		// /**
 		//  * set the initial container for the results
 		//  */
 		// this.setState({ stats: [] });
-
 		// /**
 		//  * Add each request to the promise pool so we can listen to it
 		//  */

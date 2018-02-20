@@ -22,25 +22,27 @@ export function getMarkets() {
  * @returns Promise
  */
 export function getPairPrices(id, label) {
-	const url = 'https://api.binance.com/api/v1/klines';
+	const url = URLS.hitBTC.base + URLS.hitBTC.coinPair;
+	console.log(url);
 
 	const hourly = axios
-		.get(`${url}?symbol=${id}&interval=1h`)
+		.get(`${url}${id}&period=H1`)
 		.then(prices => formatCandles(prices.data));
 
-	const daily = axios
-		.get(`${url}?symbol=${id}&interval=1d`)
-		.then(prices => formatCandles(prices.data));
+	// const daily = axios
+	// 	.get(`${url}?symbol=${id}&interval=1d`)
+	// 	.then(prices => formatCandles(prices.data));
 
-	return Promise.all([hourly, daily]).then(prices => {
-		return {
-			volume: prices[0].volume,
-			last: prices[0].last,
-			hour: prices[0].time,
-			day: prices[1].time,
-			label: label,
-			id: id
-		};
+	return Promise.all([hourly]).then(prices => {
+		return prices;
+		// return {
+		// 	volume: prices.volume,
+		// 	last: prices.last,
+		// 	hour: prices.time,
+		// 	day: prices.time,
+		// 	label: label,
+		// 	id: id
+		// };
 	});
 }
 
