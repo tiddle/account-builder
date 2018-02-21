@@ -89,3 +89,25 @@ function formatCandles(candles) {
 		time: output
 	};
 }
+
+/**
+ * Creates candles for all available markets
+ *
+ * @export
+ * @returns {Promise}
+ */
+export function getAllCandles() {
+	return getMarkets()
+		.then(markets => {
+			const pairPrices = markets
+				.slice(0, 10) // only the first 10
+				.map(market => {
+					return getPairPrices(market.id, market.label);
+				});
+
+			return Promise.all(pairPrices);
+		})
+		.catch(err => {
+			console.log(err);
+		});
+}

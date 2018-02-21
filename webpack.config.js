@@ -1,7 +1,7 @@
 var path = require('path');
 
 module.exports = {
-    entry: './src/lambda/cryptopia.js',
+    entry: './src/lambda/binance.js',
     output: {
         path: path.resolve(__dirname, 'lambda-dist'),
         filename: '[name].js',
