@@ -1,6 +1,5 @@
-import { getPairPrices, getMarkets } from './market';
+import { getAllCandles } from './market';
 import { calculateStats, getHighLow } from '../utils/price';
-
 
 /**
  * Get account builders
@@ -9,16 +8,9 @@ import { calculateStats, getHighLow } from '../utils/price';
  * @returns
  */
 export async function getAccountBuilders() {
-	const markets = await getMarkets();
+	const candles = await getAllCandles();
 
-	const pairPrices = markets
-		// .slice(0, 10) // only the first 10
-		.filter(market => market.volume > 1) // only those with volumes
-		.map(market => {
-			return getPairPrices(market.id, market.volume, market.last);
-		});
-
-	const stats = pairPrices.map(pairPrice => {
+	const stats = candles.map(pairPrice => {
 		return pairPrice.then(price => {
 			const highLow = getHighLow(price.hour);
 			return {
@@ -38,28 +30,22 @@ export async function getAccountBuilders() {
 }
 
 export async function getAccountBuildersStreamable() {
-    const markets = await getMarkets();
+	const candles = getAllCandles();
 
-    const pairPrices = markets
-    // .slice(0, 10) // only the first 10
-        .filter(market => market.volume > 1) // only those with volumes
-        .map(market => {
-            return getPairPrices(market.id, market.volume, market.last);
-        });
-
-    return pairPrices.map(pairPrice => {
-        return pairPrice.then(price => {
-            const highLow = getHighLow(price.hour);
-            return {
-                volume: price.volume,
-                last: price.last,
-                low: highLow.low,
-                high: highLow.high,
-                hour: calculateStats(price.hour, price.label, price.id),
-                day: calculateStats(price.day, price.label, price.id),
-                id: price.id,
-                label: price.label
-            };
-        });
-    });
+	return candles.map(pairPrice => {
+		console.log(pairPrice);
+		return pairPrice.then(price => {
+			const highLow = getHighLow(price.hour);
+			return {
+				volume: price.volume,
+				last: price.last,
+				low: highLow.low,
+				high: highLow.high,
+				hour: calculateStats(price.hour, price.label, price.id),
+				day: calculateStats(price.day, price.label, price.id),
+				id: price.id,
+				label: price.label
+			};
+		});
+	});
 }
