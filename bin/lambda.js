@@ -1,4 +1,4 @@
-var indexModule = require('../lambda-dist/main.js');
+var indexModule = require('../lambda-dist/binance.js');
 
 var fakeLambdaContext = {
 	succeed: function succeed(results) {
