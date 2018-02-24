@@ -5,7 +5,8 @@ import numeral from 'numeral';
 import 'react-table/react-table.css';
 import './App.css';
 
-import { getAccountBuilders } from './binance/accountbuilder';
+import { getAccountBuilders as binanceAccountBuilders } from './binance/accountbuilder';
+import { getAccountBuilders } from './cryptopia/accountbuilder';
 
 class App extends Component {
 	constructor(props) {
@@ -16,13 +17,22 @@ class App extends Component {
 	}
 
 	async componentWillMount() {
-		getAccountBuilders().then(results => {
-			this.setState(state => {
-				return {
-					...state,
-					stats: results
-				};
+		if (window.location.search.indexOf('BINA') !== -1) {
+			this.setState({
+				exchange: 'Binance'
 			});
+			binanceAccountBuilders().then(this.setStateStats.bind(this));
+		} else {
+			getAccountBuilders().then(this.setStateStats.bind(this));
+		}
+	}
+
+	setStateStats(results) {
+		this.setState(state => {
+			return {
+				...state,
+				stats: results
+			};
 		});
 	}
 
@@ -142,26 +152,10 @@ class App extends Component {
 				<header className="App-header">
 					<h1>{this.state.exchange} Account Builder Finder</h1>
 				</header>
-				{this.state.exchange === 'Binance' && (
-					<div>
-						<h2>
-							YOU WILL NEED A BROWSER PLUGIN THAT ALLOWS OVERRIDE
-							OF CORS FOR BINANCE DATA
-						</h2>
-						<p>
-							This is in early <strong>BETA</strong>
-						</p>
-						<p>
-							I haven't had time to create an api for the data,
-							just search for "allow origin browser plugin". I use
-							"CORS Everywhere" on firefox.
-						</p>
-					</div>
-				)}
 
 				{this.state.exchange !== 'Binance' && (
 					<p>
-						<a href="?BINA">Binance Account Builders</a>
+						<a href="?exchange=BINA">Binance Account Builders</a>
 					</p>
 				)}
 
