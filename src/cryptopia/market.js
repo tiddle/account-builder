@@ -80,7 +80,7 @@ export function getAllCandles() {
 	return getMarkets()
 		.then(markets => {
 			const pairPrices = markets
-				.slice(0, 10) // only the first 10
+				// .slice(0, 10) // only the first 10
 				.filter(market => market.volume > 1) // only those with volumes
 				.map(market => {
 					return getPairPrices(market.id, market.volume, market.last);

@@ -27,7 +27,6 @@ export async function getAccountBuilders() {
 
 export async function getAccountBuildersStreamable() {
 	const candles = await getAllCandles();
-	console.log(candles);
 
 	return candles.map(price => {
 		const highLow = getHighLow(price.hour);
