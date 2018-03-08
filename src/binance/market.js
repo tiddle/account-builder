@@ -39,16 +39,20 @@ export function getPairPrices(id, label) {
 		.get(`${url}?symbol=${id}&interval=1d`)
 		.then(prices => formatCandles(prices.data));
 
-	return Promise.all([hourly, daily]).then(prices => {
-		return {
-			volume: prices[0].volume,
-			last: prices[0].last,
-			hour: prices[0].time,
-			day: prices[1].time,
-			label: label,
-			id: id
-		};
-	});
+	return Promise.all([hourly, daily])
+		.then(prices => {
+			return {
+				volume: prices[0].volume,
+				last: prices[0].last,
+				hour: prices[0].time,
+				day: prices[1].time,
+				label: label,
+				id: id
+			};
+		})
+		.catch(err => {
+			console.log(err);
+		});
 }
 
 function morphBINAData(markets) {
@@ -91,7 +95,7 @@ function formatCandles(candles) {
 }
 
 /**
- * Creates candles for all available markets
+ * Get candles from endpoint
  *
  * @export
  * @returns {Promise}
@@ -103,5 +107,26 @@ export function getAllCandles() {
 		)
 		.then(results => {
 			return results.data;
+		})
+		.catch(e => {
+			console.log(e);
+		});
+}
+
+export function createCandles() {
+	return getMarkets()
+		.then(markets => {
+			return markets.map(market => {
+				const pairPrices = markets
+					.slice(0, 10) // only the first 10
+					.map(market => {
+						return getPairPrices(market.id, market.label);
+					});
+
+				return Promise.all(pairPrices);
+			});
+		})
+		.catch(err => {
+			console.log(err);
 		});
 }

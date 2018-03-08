@@ -1,7 +1,7 @@
-import { getAllCandles } from '../binance/market';
+import { createCandles } from '../binance/market';
 
-exports.getCandles = function(event, content) {
-	return getAllCandles().then(results => {
+exports.getCandles = function(event, content, callback) {
+	return createCandles().then(results => {
 		content.succeed(results);
 	});
 };
