@@ -6,6 +6,7 @@
 	"homepage": "http://tiddle.github.io/account-builder",
 	"dependencies": {
 		"axios": "^0.17.1",
+		"ccxt": "^1.11.84",
 		"numeral": "^2.0.6",
 		"react": "^16.2.0",
 		"react-dom": "^16.2.0",

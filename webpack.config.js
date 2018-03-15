@@ -30,6 +30,27 @@ const cryptopia = Object.assign({}, defaultOutput, {
 	}
 });
 
-module.exports = [binance, cryptopia];
+const ccxt = {
+	entry: './src/markets/test.js',
+	output: {
+		path: path.resolve(__dirname, 'lambda-dist'),
+		filename: 'market.js'
+	},
+	target: 'node',
+	module: {
+		loaders: [
+			{
+				test: /\.js$/,
+				exclude: /node_modules/,
+				loader: 'babel-loader',
+				query: {
+					presets: ['es2015']
+				}
+			}
+		]
+	}
+};
+
+module.exports = [ccxt];
 
 // module.exports = defaultOutput;
