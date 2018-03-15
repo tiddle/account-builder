@@ -1,7 +1,9 @@
 import axios from 'axios';
+import ccxt from 'ccxt';
 
 import { marketUtil } from '../utils/market';
 import { URLS } from '../constants/marketUrls';
+
 /**
  * Get list of markets from hitbtc
  *
@@ -9,8 +11,8 @@ import { URLS } from '../constants/marketUrls';
  * @returns Promise
  */
 export function getMarkets() {
-	const url = URLS.hitBTC.base + URLS.hitBTC.markets;
-	return marketUtil(url, morphHITBTCData);
+	let hitbtc = new ccxt.hitbtc2();
+	return hitbtc.loadMarkets();
 }
 
 /**
@@ -48,10 +50,10 @@ export function getPairPrices(id, label) {
 
 function morphHITBTCData(markets) {
 	return markets.data
-		.filter(market => market.quoteCurrency === 'BTC')
+		.filter(market => market.info.quoteCurrency === 'BTC')
 		.map(market => {
 			return {
-				label: market.baseCurrency + '/' + market.quoteCurrency,
+				label: market.symbol,
 				id: market.id
 			};
 		});
