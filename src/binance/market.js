@@ -89,3 +89,19 @@ function formatCandles(candles) {
 		time: output
 	};
 }
+
+/**
+ * Creates candles for all available markets
+ *
+ * @export
+ * @returns {Promise}
+ */
+export function getAllCandles() {
+	return axios
+		.get(
+			'https://af58wbs1mc.execute-api.us-east-1.amazonaws.com/dev/api/v1/binance'
+		)
+		.then(results => {
+			return results.data;
+		});
+}

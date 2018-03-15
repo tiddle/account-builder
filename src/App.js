@@ -145,7 +145,7 @@ class App extends Component {
 
 	satoshiFormat(row) {
 		return (
-			<span style={{ display: 'block', textAlign: 'right' }}>
+			<span style={{ display: 'block', textAlign: 'right'}}>
 				{numeral(Math.floor(row.value * 100000000)).format('0,0')} sat
 			</span>
 		);
@@ -200,7 +200,7 @@ class App extends Component {
 
 				{this.state.exchange !== 'Binance' && (
 					<p>
-						<a href="?BINA">Binance Account Builders</a>
+						<a href="?exchange=BINA">Binance Account Builders</a>
 					</p>
 				)}
 

@@ -69,3 +69,26 @@ function morphCPIAData(markets) {
 function sortByVolume(marketA, marketB) {
 	return marketB.volume - marketA.volume;
 }
+
+/**
+ * Creates candles for all available markets
+ *
+ * @export
+ * @returns {Promise}
+ */
+export function getAllCandles() {
+	return getMarkets()
+		.then(markets => {
+			const pairPrices = markets
+				// .slice(0, 10) // only the first 10
+				.filter(market => market.volume > 1) // only those with volumes
+				.map(market => {
+					return getPairPrices(market.id, market.volume, market.last);
+				});
+
+			return Promise.all(pairPrices);
+		})
+		.catch(err => {
+			console.log(err);
+		});
+}
