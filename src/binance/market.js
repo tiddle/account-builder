@@ -97,11 +97,11 @@ function formatCandles(candles) {
  * @returns {Promise}
  */
 export function getAllCandles() {
-	return axios
-		.get(
-			'https://af58wbs1mc.execute-api.us-east-1.amazonaws.com/dev/api/v1/binance'
-		)
-		.then(results => {
-			return results.data;
-		});
+	// return axios
+	// 	.get(
+	// 		'https://af58wbs1mc.execute-api.us-east-1.amazonaws.com/dev/api/v1/binance'
+	// 	)
+	// 	.then(results => {
+	// 		return results.data;
+	// 	});
 }

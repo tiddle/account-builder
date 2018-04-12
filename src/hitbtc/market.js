@@ -1,18 +1,25 @@
 import axios from 'axios';
 import ccxt from 'ccxt';
+import { delay } from 'lodash';
 
 import { marketUtil } from '../utils/market';
 import { URLS } from '../constants/marketUrls';
 
+export function getExchange() {
+	return new ccxt.hitbtc2();
+}
 /**
  * Get list of markets from hitbtc
  *
  * @export
  * @returns Promise
  */
-export function getMarkets() {
-	let hitbtc = new ccxt.hitbtc2();
-	return hitbtc.loadMarkets();
+export function getMarkets(exchange) {
+	if(exchange) {
+		return exchange.loadMarkets();
+	}
+
+	return false;
 }
 
 /**
@@ -21,40 +28,21 @@ export function getMarkets() {
  * @export
  * @param {string} id id of coin pair
  * @param {string} label of coin pair
+ * @param {string} exchange of coin pair
+ * @param {string} time period
  * @returns Promise
  */
-export function getPairPrices(id, label) {
-	const url = URLS.hitBTC.base + URLS.hitBTC.coinPair;
-	console.log(url);
-
-	const hourly = axios
-		.get(`${url}${id}?period=H1`)
-		.then(prices => formatCandles(prices.data));
-
-	// const daily = axios
-	// 	.get(`${url}?symbol=${id}&interval=1d`)
-	// 	.then(prices => formatCandles(prices.data));
-
-	return Promise.all([hourly]).then(prices => {
-		return prices;
-		// return {
-		// 	volume: prices.volume,
-		// 	last: prices.last,
-		// 	hour: prices.time,
-		// 	day: prices.time,
-		// 	label: label,
-		// 	id: id
-		// };
-	});
+export async function getPairPrices(id, label, exchange, time) {
 }
 
 function morphHITBTCData(markets) {
-	return markets.data
+	return markets
 		.filter(market => market.info.quoteCurrency === 'BTC')
+		.slice(0, 5) // only the first 5
 		.map(market => {
 			return {
 				label: market.symbol,
-				id: market.id
+				id: market.symbol
 			};
 		});
 }
@@ -63,25 +51,55 @@ function formatCandles(candles) {
 	const output = candles.map(curr => {
 		return {
 			low: {
-				price: curr.min
+				price: curr[3]
 			},
 			high: {
-				price: curr.max
+				price: curr[2]
 			},
 			open: {
-				price: curr.open,
-				timestamp: new Date(curr.timestamp).getTime()
+				price: curr[1],
+				timestamp: new Date(curr[0]).getTime()
 			},
 			close: {
-				price: curr.close,
-				timestamp: new Date(curr.timestamp).getTime()
+				price: curr[4],
+				timestamp: new Date(curr[0]).getTime()
 			}
 		};
 	});
 
 	return {
-		volume: candles[candles.length - 1][10],
+		volume: candles[candles.length - 1][5],
 		last: candles[candles.length - 1][4],
 		time: output
 	};
+}
+
+export async function getAllCandles() {
+	const exchange = getExchange();
+	const markets = await getMarkets(exchange);
+	const morphedMarkets = morphHITBTCData(Object.values(markets));
+	const sleep = ms => new Promise(resolve => setTimeout(resolve, ms));
+
+	const outcome = morphedMarkets.map(async (market, i) => {
+
+		await sleep(exchange.rateLimit * i); // milliseconds
+		const hour = formatCandles(await exchange.fetchOHLCV(market.id, '1h'));
+		// const day = await getPairPrices(
+		// 	market.label,
+		// 	market.id,
+		// 	exchange,
+		// 	'1d'
+		// );
+		console.log(hour);
+		return {
+			volume: hour.volume,
+			last: hour.last,
+			hour: hour.time,
+			// day: day,
+			label: market.label,
+			id: market.id
+		};
+	});
+
+	return Promise.all(outcome);
 }
