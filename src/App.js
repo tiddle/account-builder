@@ -6,9 +6,9 @@ import './App.css';
 
 import { getAccountBuildersStreamable } from './cryptopia/accountbuilder';
 import { getAccountBuildersStreamable as binaGetAccountBuildersStreamable } from './binance/accountbuilder';
-import PromisePool from './utils/promise-pool.js';
 import { getAccountBuildersStreamable as hitbcGetAccountBuildersStreamable } from './hitbtc/accountbuilder';
 import { Cryptopia } from './components/cryptopia/cryptopia-template';
+import PromisePool from './utils/promise-pool.js';
 
 class App extends Component {
 	constructor(props) {
@@ -60,7 +60,7 @@ class App extends Component {
 	render() {
 		return (
 			<div className="App">
-				<Cryptopia columns={this.columns} stats={this.state.stats} />
+				<Cryptopia stats={this.state.stats} />
 
 				<h2>Notes:</h2>
 				<ul>
