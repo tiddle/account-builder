@@ -22,23 +22,10 @@ export function getMarkets(exchange) {
 	return false;
 }
 
-/**
- * Get history of coin pair
- *
- * @export
- * @param {string} id id of coin pair
- * @param {string} label of coin pair
- * @param {string} exchange of coin pair
- * @param {string} time period
- * @returns Promise
- */
-export async function getPairPrices(id, label, exchange, time) {
-}
-
 function morphHITBTCData(markets) {
 	return markets
 		.filter(market => market.info.quoteCurrency === 'BTC')
-		.slice(0, 5) // only the first 5
+		// .slice(0, 5) // only the first 5
 		.map(market => {
 			return {
 				label: market.symbol,
@@ -80,26 +67,16 @@ export async function getAllCandles() {
 	const morphedMarkets = morphHITBTCData(Object.values(markets));
 	const sleep = ms => new Promise(resolve => setTimeout(resolve, ms));
 
-	const outcome = morphedMarkets.map(async (market, i) => {
+	return morphedMarkets.map(async (market, i) => {
 
-		await sleep(exchange.rateLimit * i); // milliseconds
+		await sleep(exchange.rateLimit * i + 500); // milliseconds
 		const hour = formatCandles(await exchange.fetchOHLCV(market.id, '1h'));
-		// const day = await getPairPrices(
-		// 	market.label,
-		// 	market.id,
-		// 	exchange,
-		// 	'1d'
-		// );
-		console.log(hour);
 		return {
 			volume: hour.volume,
 			last: hour.last,
 			hour: hour.time,
-			// day: day,
 			label: market.label,
 			id: market.id
 		};
 	});
-
-	return Promise.all(outcome);
 }

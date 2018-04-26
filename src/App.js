@@ -1,6 +1,5 @@
 import React, { Component } from 'react';
 import ReactTable from 'react-table';
-import numeral from 'numeral';
 
 import 'react-table/react-table.css';
 import './App.css';
@@ -9,6 +8,7 @@ import { getAccountBuildersStreamable } from './cryptopia/accountbuilder';
 import { getAccountBuildersStreamable as binaGetAccountBuildersStreamable } from './binance/accountbuilder';
 import PromisePool from './utils/promise-pool.js';
 import { getAccountBuildersStreamable as hitbcGetAccountBuildersStreamable } from './hitbtc/accountbuilder';
+import { Cryptopia } from './components/cryptopia/cryptopia-template';
 
 class App extends Component {
 	constructor(props) {
@@ -16,7 +16,6 @@ class App extends Component {
 		this.state = {
 			exchange: 'Cryptopia'
 		};
-
 	}
 
 	async componentWillMount() {
@@ -58,164 +57,10 @@ class App extends Component {
 		promises.map(req => promisePool.add(req));
 	}
 
-	columns = [
-		{
-			Header: 'Pair',
-			accessor: 'label'
-		},
-		{
-			Header: 'Average Bounce',
-			accessor: 'hour.averageBounce',
-			sortMethod: (a, b) => {
-				return parseInt(a, 10) - parseInt(b, 10);
-			},
-			filterMethod: this.greaterThanFilter
-		},
-		{
-			Header: 'Volume',
-			accessor: 'volume',
-			filterMethod: this.greaterThanFilter,
-			sortMethod: this.sortForceNumber
-		},
-		{
-			Header: 'Spikes',
-			id: 'spikes',
-			accessor: price => price.hour.spikes.length,
-			filterMethod: this.greaterThanFilter
-		},
-		{
-			Header: 'Drops',
-			id: 'drops',
-			accessor: price => price.hour.drops.length,
-			filterMethod: this.greaterThanFilter
-		},
-		{
-			Header: 'Last Price (sat)',
-			accessor: 'last',
-			id: 'lastSat',
-			filterMethod: this.greaterThanFilterSatoshi,
-			sortMethod: this.sortForceNumber,
-			Cell: this.satoshiFormat
-		},
-		{
-			Header: 'Last Price (btc)',
-			accessor: 'last',
-			id: 'lastBtc',
-			sortMethod: this.sortForceNumber,
-			filterMethod: this.greaterThanFilter
-		},
-		{
-			Header: 'Low Price (sat)',
-			accessor: 'low',
-			id: 'lowSat',
-			filterMethod: this.greaterThanFilterSatoshi,
-			sortMethod: this.sortForceNumber,
-			Cell: this.satoshiFormat
-		},
-		{
-			Header: 'Low Price (btc)',
-			accessor: 'low',
-			id: 'lowBtc',
-			sortMethod: this.sortForceNumber,
-			filterMethod: this.greaterThanFilter
-		},
-		{
-			Header: 'High Price (sat)',
-			accessor: 'high',
-			id: 'highSat',
-			filterMethod: this.greaterThanFilterSatoshi,
-			sortMethod: this.sortForceNumber,
-			Cell: this.satoshiFormat
-		},
-		{
-			Header: 'High Price (btc)',
-			accessor: 'high',
-			id: 'highBtc',
-			sortMethod: this.sortForceNumber,
-			filterMethod: this.greaterThanFilter
-		}
-	];
-
-	satoshiFormat(row) {
-		return (
-			<span style={{ display: 'block', textAlign: 'right'}}>
-				{numeral(Math.floor(row.value * 100000000)).format('0,0')} sat
-			</span>
-		);
-	}
-
-	greaterThanFilter(filter, row) {
-		if (!filter.value) {
-			return true;
-		}
-
-		if (parseFloat(row[filter.id]) > filter.value) {
-			return true;
-		}
-	}
-
-	greaterThanFilterSatoshi(filter, row) {
-		if (!filter.value) {
-			return true;
-		}
-
-		if (parseInt(row[filter.id] * 100000000, 10) > filter.value) {
-			return true;
-		}
-	}
-
-	sortForceNumber(a, b) {
-		return parseFloat(a) - parseFloat(b);
-	}
-
 	render() {
 		return (
 			<div className="App">
-				<header className="App-header">
-					<h1>{this.state.exchange} Account Builder Finder</h1>
-				</header>
-				{this.state.exchange === 'Binance' && (
-					<div>
-						<h2>
-							YOU WILL NEED A BROWSER PLUGIN THAT ALLOWS OVERRIDE
-							OF CORS FOR BINANCE DATA
-						</h2>
-						<p>
-							This is in early <strong>BETA</strong>
-						</p>
-						<p>
-							I haven't had time to create an api for the data,
-							just search for "allow origin browser plugin". I use
-							"CORS Everywhere" on firefox.
-						</p>
-					</div>
-				)}
-
-				{this.state.exchange !== 'Binance' && (
-					<p>
-						<a href="?exchange=BINA">Binance Account Builders</a>
-					</p>
-				)}
-
-				{this.state.stats && (
-					<div>
-						<h2>Hourly Candles</h2>
-						<ReactTable
-							filterable
-							data={this.state.stats}
-							columns={this.columns}
-						/>
-
-						<h2>Daily Candles</h2>
-						<ReactTable
-							filterable
-							data={this.state.stats}
-							columns={this.columns}
-						/>
-					</div>
-				)}
-
-				{!this.state.stats && <p>Loading...</p>}
+				<Cryptopia columns={this.columns} stats={this.state.stats} />
 
 				<h2>Notes:</h2>
 				<ul>
