@@ -1,22 +1,15 @@
-import { getAllCandles } from './market';
+import ccxt from 'ccxt';
+import { getAllCandles, formatForTable } from '../api-translate/api-translate'
 
-import { calculateStats, getHighLow } from '../utils/price';
+
+function getExchange() {
+	return new ccxt.hitbtc2();
+}
 
 export async function getAccountBuildersStreamable() {
-	const candles = await getAllCandles();
+	const candles = await getAllCandles(getExchange);
 
 	return candles.map(pairPrice => {
-		return pairPrice.then(price => {
-			const highLow = getHighLow(price.hour);
-			return {
-				volume: price.volume,
-				last: price.last,
-				low: highLow.low,
-				high: highLow.high,
-				hour: calculateStats(price.hour, price.label, price.id),
-				id: price.id,
-				label: price.label
-			};
-		});
+		return pairPrice.then(formatForTable);
 	});
 }

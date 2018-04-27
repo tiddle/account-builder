@@ -8,6 +8,7 @@ import { getAccountBuildersStreamable } from './cryptopia/accountbuilder';
 import { getAccountBuildersStreamable as binaGetAccountBuildersStreamable } from './binance/accountbuilder';
 import { getAccountBuildersStreamable as hitbcGetAccountBuildersStreamable } from './hitbtc/accountbuilder';
 import { Cryptopia } from './components/cryptopia/cryptopia-template';
+import { HitBtcTemplate } from './components/hitbtc/hitbtc-template';
 import PromisePool from './utils/promise-pool.js';
 
 class App extends Component {
@@ -16,6 +17,26 @@ class App extends Component {
 		this.state = {
 			exchange: 'Cryptopia'
 		};
+	}
+
+	setExchange() {
+		const locationSearch = window.location.search;
+
+		if (locationSearch.indexOf('BINA') !== -1) {
+			this.setState({
+				exchange: 'Binance'
+			});
+			return binaGetAccountBuildersStreamable();
+		} 
+
+		if(locationSearch.indexOf('HITBTC') !== -1) {
+			this.setState({
+				exchange: 'hitBtc'
+			});
+			return hitbcGetAccountBuildersStreamable();
+		}
+
+		return getAccountBuildersStreamable();
 	}
 
 	async componentWillMount() {
@@ -39,14 +60,7 @@ class App extends Component {
 			}
 		});
 
-		if (window.location.search.indexOf('BINA') !== -1) {
-			this.setState({
-				exchange: 'Binance'
-			});
-			promises = await binaGetAccountBuildersStreamable();
-		} else {
-			promises = await hitbcGetAccountBuildersStreamable();
-		}
+		promises = await this.setExchange();
 		/**
 		 * set the initial container for the results
 		 */

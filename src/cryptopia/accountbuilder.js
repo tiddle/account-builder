@@ -1,44 +1,16 @@
-import { getAllCandles } from './market';
-import { calculateStats, getHighLow } from '../utils/price';
+import ccxt from 'ccxt';
+import { getAllCandles, formatForTable } from '../api-translate/api-translate'
 
-/**
- * Get account builders
- *
- * @export function
- * @returns
- */
-export async function getAccountBuilders() {
-	const candles = await getAllCandles();
 
-	return candles.map(price => {
-		const highLow = getHighLow(price.hour);
-		return {
-			volume: price.volume,
-			last: price.last,
-			low: highLow.low,
-			high: highLow.high,
-			hour: calculateStats(price.hour, price.label, price.id),
-			day: calculateStats(price.day, price.label, price.id),
-			id: price.id,
-			label: price.label
-		};
-	});
+function getExchange() {
+	return new ccxt.cryptopia();
 }
 
 export async function getAccountBuildersStreamable() {
-	const candles = await getAllCandles();
+	const candles = await getAllCandles(getExchange);
 
-	return candles.map(price => {
-		const highLow = getHighLow(price.hour);
-		return {
-			volume: price.volume,
-			last: price.last,
-			low: highLow.low,
-			high: highLow.high,
-			hour: calculateStats(price.hour, price.label, price.id),
-			day: calculateStats(price.day, price.label, price.id),
-			id: price.id,
-			label: price.label
-		};
+	return candles.map(pairPrice => {
+		return pairPrice.then(formatForTable);
 	});
 }
+

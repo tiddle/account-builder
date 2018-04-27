@@ -1,13 +1,5 @@
-import axios from 'axios';
-import ccxt from 'ccxt';
-import { delay } from 'lodash';
+import { calculateStats, getHighLow } from '../utils/price';
 
-import { marketUtil } from '../utils/market';
-import { URLS } from '../constants/marketUrls';
-
-export function getExchange() {
-	return new ccxt.hitbtc2();
-}
 /**
  * Get list of markets from hitbtc
  *
@@ -15,16 +7,21 @@ export function getExchange() {
  * @returns Promise
  */
 export function getMarkets(exchange) {
-	if(exchange) {
+	if (exchange) {
 		return exchange.loadMarkets();
 	}
 
 	return false;
 }
 
-function morphHITBTCData(markets) {
+/**
+ * Morph market list to useable format
+ *
+ * @param {Array} markets
+ */
+export function morphExchangeData(markets) {
 	return markets
-		.filter(market => market.info.quoteCurrency === 'BTC')
+		.filter(market => market.quote === 'BTC')
 		// .slice(0, 5) // only the first 5
 		.map(market => {
 			return {
@@ -34,7 +31,12 @@ function morphHITBTCData(markets) {
 		});
 }
 
-function formatCandles(candles) {
+/**
+ * Format candles to be app specific
+ *
+ * @param {Array} candles
+ */
+export function formatCandles(candles) {
 	const output = candles.map(curr => {
 		return {
 			low: {
@@ -61,15 +63,16 @@ function formatCandles(candles) {
 	};
 }
 
-export async function getAllCandles() {
-	const exchange = getExchange();
+export async function getAllCandles(exchangeFunc) {
+	const exchange = exchangeFunc();
+	console.log(exchange);
 	const markets = await getMarkets(exchange);
-	const morphedMarkets = morphHITBTCData(Object.values(markets));
+	const morphedMarkets = morphExchangeData(Object.values(markets));
+	console.log(markets, morphedMarkets);
 	const sleep = ms => new Promise(resolve => setTimeout(resolve, ms));
 
 	return morphedMarkets.map(async (market, i) => {
-
-		await sleep(exchange.rateLimit * i + 500); // milliseconds
+		await sleep(exchange.rateLimit * i); // milliseconds
 		const hour = formatCandles(await exchange.fetchOHLCV(market.id, '1h'));
 		return {
 			volume: hour.volume,
@@ -79,4 +82,17 @@ export async function getAllCandles() {
 			id: market.id
 		};
 	});
+}
+
+export function formatForTable(price) {
+	const highLow = getHighLow(price.hour);
+	return {
+		volume: price.volume,
+		last: price.last,
+		low: highLow.low,
+		high: highLow.high,
+		hour: calculateStats(price.hour, price.label, price.id),
+		id: price.id,
+		label: price.label
+	};
 }

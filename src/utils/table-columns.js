@@ -1,5 +1,6 @@
 import React from 'react';
 import numeral from 'numeral';
+import { get } from 'lodash';
 
 export const columns = [
 	{
@@ -23,13 +24,13 @@ export const columns = [
 	{
 		Header: 'Spikes',
 		id: 'spikes',
-		accessor: price => price.hour.spikes.length,
+		accessor: price => get(price, 'price.hour.spikes', []).length,
 		filterMethod: greaterThanFilter
 	},
 	{
 		Header: 'Drops',
 		id: 'drops',
-		accessor: price => price.hour.drops.length,
+		accessor: price => get(price, 'price.hour.drops', []).length,
 		filterMethod: greaterThanFilter
 	},
 	{
