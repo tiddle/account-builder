@@ -24,13 +24,13 @@ export const columns = [
 	{
 		Header: 'Spikes',
 		id: 'spikes',
-		accessor: price => get(price, 'price.hour.spikes', []).length,
+		accessor: price => get(price, 'hour.spikes', []).length,
 		filterMethod: greaterThanFilter
 	},
 	{
 		Header: 'Drops',
 		id: 'drops',
-		accessor: price => get(price, 'price.hour.drops', []).length,
+		accessor: price => get(price, 'hour.drops', []).length,
 		filterMethod: greaterThanFilter
 	},
 	{

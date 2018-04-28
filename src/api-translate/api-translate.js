@@ -21,8 +21,9 @@ export function getMarkets(exchange) {
  */
 export function morphExchangeData(markets) {
 	return markets
+		.filter(market => market.active)
 		.filter(market => market.quote === 'BTC')
-		// .slice(0, 5) // only the first 5
+		.slice(0, 5) // only the first 5
 		.map(market => {
 			return {
 				label: market.symbol,
@@ -65,10 +66,8 @@ export function formatCandles(candles) {
 
 export async function getAllCandles(exchangeFunc) {
 	const exchange = exchangeFunc();
-	console.log(exchange);
 	const markets = await getMarkets(exchange);
 	const morphedMarkets = morphExchangeData(Object.values(markets));
-	console.log(markets, morphedMarkets);
 	const sleep = ms => new Promise(resolve => setTimeout(resolve, ms));
 
 	return morphedMarkets.map(async (market, i) => {
