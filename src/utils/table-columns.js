@@ -8,6 +8,11 @@ export const columns = [
 		accessor: 'label'
 	},
 	{
+		Header: 'Hours of Data',
+		id: 'dataAmount',
+		accessor: price => get(price, 'hour.amountOfData', false)
+	},
+	{
 		Header: 'Average Bounce',
 		accessor: 'hour.averageBounce',
 		sortMethod: (a, b) => {
@@ -93,7 +98,7 @@ function greaterThanFilter(filter, row) {
 		return true;
 	}
 
-	if (parseFloat(row[filter.id]) > filter.value) {
+	if (parseFloat(row[filter.id], 10) > filter.value) {
 		return true;
 	}
 }

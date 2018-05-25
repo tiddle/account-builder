@@ -23,9 +23,9 @@ export function morphExchangeData(markets) {
 	return markets
 		.filter(market => market.active)
 		.filter(market => market.quote === 'BTC')
-		.slice(0, 5) // only the first 5
 		.map(market => {
 			return {
+				original: market,
 				label: market.symbol,
 				id: market.symbol
 			};
@@ -38,6 +38,7 @@ export function morphExchangeData(markets) {
  * @param {Array} candles
  */
 export function formatCandles(candles) {
+	// OHLCV
 	const output = candles.map(curr => {
 		return {
 			low: {
@@ -70,9 +71,14 @@ export async function getAllCandles(exchangeFunc) {
 	const morphedMarkets = morphExchangeData(Object.values(markets));
 	const sleep = ms => new Promise(resolve => setTimeout(resolve, ms));
 
+	const ignoreSleepExchanges = ['cryptopia', 'binance'];
+
 	return morphedMarkets.map(async (market, i) => {
-		await sleep(exchange.rateLimit * i); // milliseconds
-		const hour = formatCandles(await exchange.fetchOHLCV(market.id, '1h'));
+		if (ignoreSleepExchanges.indexOf(exchange.id) < 0) {
+			await sleep(exchange.rateLimit * i); // milliseconds
+		}
+		const OHLCV = await exchange.fetchOHLCV(market.id, '1h', 9999999);
+		const hour = formatCandles(OHLCV);
 		return {
 			volume: hour.volume,
 			last: hour.last,

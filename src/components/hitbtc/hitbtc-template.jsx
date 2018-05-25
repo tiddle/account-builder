@@ -8,21 +8,10 @@ export class HitBtcTemplate extends Component {
 		return (
 			<div className="cryptopia">
 				<header className="App-header">
-					<h1>HitBTC Account Builder Finder</h1>
+					<h2>{this.props.exchange}</h2>
 				</header>
 				<div>
-					<h2>
-						YOU WILL NEED A BROWSER PLUGIN THAT ALLOWS OVERRIDE OF
-						CORS FOR HITBTC DATA
-					</h2>
-					<p>
-						This is in early <strong>BETA</strong>
-					</p>
-					<p>
-						I haven't had time to create an api for the data, just
-						search for "allow origin browser plugin". I use "CORS
-						Everywhere" on firefox.
-					</p>
+					<p>This is slower than the others because HitBTC actually enforces their rate limits</p>
 				</div>
 				{this.props.stats && (
 					<div>

@@ -96,6 +96,7 @@ export function calculateStats(
 			averageBounce: 0,
 			averagePrice: 0,
 			label: label,
+			amountOfData: collection.length,
 			id: id
 		}
 	);

@@ -8,12 +8,21 @@ export class Cryptopia extends Component {
 		return (
 			<div className="cryptopia">
 				<header className="App-header">
-					<h1>Cryptopia Account Builder Finder</h1>
+					<h2>{this.props.exchange}</h2>
 				</header>
+				{this.props.exchange === 'HitBtc' && (
+					<div>
+						<p>
+							This is slower than the others because HitBTC
+							actually enforces their rate limits. This could take
+							5 mins or so.
+						</p>
+					</div>
+				)}
 
 				{this.props.stats && (
 					<div>
-						<h2>Hourly Candles</h2>
+						<h3>Hourly Candles</h3>
 						<ReactTable
 							filterable
 							data={this.props.stats}

@@ -31,7 +31,7 @@ class App extends Component {
 
 		if(locationSearch.indexOf('HITBTC') !== -1) {
 			this.setState({
-				exchange: 'hitBtc'
+				exchange: 'HitBtc'
 			});
 			return hitbcGetAccountBuildersStreamable();
 		}
@@ -74,7 +74,7 @@ class App extends Component {
 	render() {
 		return (
 			<div className="App">
-				<Cryptopia stats={this.state.stats} />
+				<Cryptopia stats={this.state.stats} exchange={this.state.exchange} />
 
 				<h2>Notes:</h2>
 				<ul>
